@@ -1,0 +1,30 @@
+@import './styles/theme.css';
+@import './styles/glass.css';
+
+:root {
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+#root {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.pb-safe {
+  padding-bottom: var(--safe-area-bottom);
+}
+
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+  .glass-card {
+    border-radius: 12px;
+    padding: 1rem !important;
+  }
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
