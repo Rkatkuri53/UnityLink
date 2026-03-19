@@ -75,7 +75,7 @@ const ResidentDashboard = ({ onShowBill, activeModule, setActiveModule }) => {
           <motion.div 
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 20, opacity: 1 }}
-            className="absolute top-0 left-1/2 -translate-x-1/2 z-[50] flex items-center gap-2 bg-emerald-500 text-black px-4 py-2 rounded-full font-black text-[10px] uppercase shadow-xl"
+            className="absolute top-0 left-1/2 -translate-x-1/2 z-[50] flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full font-black text-[10px] uppercase shadow-xl"
           >
             <RefreshCw size={14} className="animate-spin" /> Syncing...
           </motion.div>
@@ -101,7 +101,7 @@ const ResidentDashboard = ({ onShowBill, activeModule, setActiveModule }) => {
         <div>
           <h2 className="text-4xl font-black tracking-tight mb-2">Morning, {user.name.split(' ')[0]}!</h2>
           <div className="flex gap-3">
-             <span className="flex items-center gap-1.5 text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full border border-emerald-500/20 cursor-pointer" onClick={handleRefresh}>
+             <span className="flex items-center gap-1.5 text-[10px] font-black uppercase bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-100 cursor-pointer" onClick={handleRefresh}>
                 <ShieldCheck size={12} /> {user.unit} Verified
              </span>
              <span className="flex items-center gap-1.5 text-[10px] font-black uppercase bg-white/5 text-slate-400 px-3 py-1 rounded-full border border-white/10">
@@ -133,9 +133,9 @@ const ResidentDashboard = ({ onShowBill, activeModule, setActiveModule }) => {
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* AGENTIC FEATURE: Primary Actions */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <QuickLink onClick={() => setActiveModule('premium')} icon={<Sparkles className="text-emerald-500" />} title="Premium Care" desc="Book Deep Cleaning" hColor="bg-emerald-500/5 border-emerald-500/20" />
+                <QuickLink onClick={() => setActiveModule('premium')} icon={<Sparkles className="text-blue-600" />} title="Premium Care" desc="Book Deep Cleaning" hColor="bg-blue-50/5 border-blue-200" />
                 <QuickLink onClick={() => setActiveModule('polls')} icon={<BarChart className="text-purple-500" />} title="Active Poll" desc="Pool Upgrade Vote" hColor="bg-purple-500/10 border-purple-500/20" />
-                <QuickLink onClick={() => setActiveModule('staff')} icon={<UserCheck className="text-emerald-500" />} title="Helper Online" desc="Raju Kumar Check-in" />
+                <QuickLink onClick={() => setActiveModule('staff')} icon={<UserCheck className="text-blue-600" />} title="Helper Online" desc="Raju Kumar Check-in" />
                 <QuickLink onClick={() => setShowEmergency(true)} icon={<PhoneCall className="text-rose-500" />} title="Emergency" desc="Police/Fire/Med" hColor="bg-rose-500/10 border-rose-500/20" />
             </div>
 

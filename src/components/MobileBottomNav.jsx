@@ -23,7 +23,7 @@ const MobileBottomNav = ({ activeTab, onTabChange }) => {
   const tabs = user.role === 'Society-Admin' ? adminTabs : residentTabs;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[12000] lg:hidden bg-black/60 backdrop-blur-2xl border-t border-white/5 pb-safe">
+    <div className="fixed bottom-0 left-0 right-0 z-[12000] lg:hidden bg-white border-t border-slate-200 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
       <div className="flex justify-around items-center h-16 px-2">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -36,14 +36,14 @@ const MobileBottomNav = ({ activeTab, onTabChange }) => {
               {isActive && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute -top-1 w-12 h-1 bg-emerald-500 rounded-full"
+                  className="absolute -top-[1px] w-12 h-0.5 bg-blue-600 rounded-full"
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}
-              <div className={`transition-all duration-300 ${isActive ? 'text-emerald-500 scale-110' : 'text-slate-500'}`}>
+              <div className={`transition-all duration-300 ${isActive ? 'text-blue-600 scale-110' : 'text-slate-400'}`}>
                 {tab.icon}
               </div>
-              <span className={`text-[8px] font-black uppercase mt-1 tracking-tighter ${isActive ? 'text-white' : 'text-slate-500'}`}>
+              <span className={`text-[8px] font-black uppercase mt-1 tracking-tighter ${isActive ? 'text-blue-600' : 'text-slate-400'}`}>
                 {tab.label}
               </span>
             </button>
@@ -51,6 +51,7 @@ const MobileBottomNav = ({ activeTab, onTabChange }) => {
         })}
       </div>
     </div>
+  );
   );
 };
 
