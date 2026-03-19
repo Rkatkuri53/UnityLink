@@ -9,8 +9,15 @@ const StaffManagement = () => {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const data = DataService.getData();
-    setHelpers(data.staff || []);
+    const fetchData = async () => {
+        try {
+            const data = await DataService.getStaff();
+            setHelpers(data || []);
+        } catch (err) {
+            console.error("Staff Fetch Error:", err);
+        }
+    };
+    fetchData();
   }, []);
 
   const filtered = helpers.filter(h => 
@@ -70,13 +77,13 @@ const StaffManagement = () => {
                       </div>
                       <div className="text-right">
                           <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Entry</p>
-                          <p className="text-xs font-black text-white">{helper.entryTime}</p>
+                          <p className="text-xs font-black text-white">{helper.entryTime || '08:00 AM'}</p>
                       </div>
                   </div>
 
                   <div className="space-y-4">
                       <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
-                          <span>Works at {helper.units.length} Units</span>
+                          <span>Works at {helper.units?.length || 0} Units</span>
                           <span className="text-emerald-500 flex items-center gap-1"><ShieldCheck size={12}/> Police Verified</span>
                       </div>
                       <div className="flex gap-4 p-3 bg-white/5 rounded-xl border border-white/5">

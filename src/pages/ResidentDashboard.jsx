@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import GreenTicket from '../components/GreenTicket';
 import NoticeBoard from '../components/NoticeBoard';
 import ExpenditureLedger from '../components/ExpenditureLedger';
@@ -25,6 +26,7 @@ import SocketService from '../services/socketService';
 import { Wallet, Users, ShoppingBag, Calendar, ArrowRight, ShieldCheck, ShieldAlert, BadgeCent, Video, Zap, MessageSquare, Megaphone, PhoneCall, UserCheck, Star, Home, BarChart, Sparkles, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
+import DataService from '../services/dataService';
 
 const ResidentDashboard = ({ onShowBill, activeModule, setActiveModule }) => {
   const { user } = useAuth();
@@ -36,6 +38,21 @@ const ResidentDashboard = ({ onShowBill, activeModule, setActiveModule }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
+    const loadInitialData = async () => {
+        try {
+            // In real world, we'd fetch water level from IoT table
+            // For now, we simulate the fetch delay
+            const residents = await DataService.getResidents();
+            if (residents.length > 0) {
+                // Initial data sync successful
+            }
+        } catch (err) {
+            console.error("Data Sync Error:", err);
+        }
+    };
+
+    loadInitialData();
+
     SocketService.on('iot_update', (data) => {
         if (data.type === 'water') setWaterLevel(data.value);
     });

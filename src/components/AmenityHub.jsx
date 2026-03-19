@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Users, ChevronRight, CheckCircle2, AlertCircle, Sparkles, Plus, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'react-hot-toast';
+import DataService from '../services/dataService';
 
 const AmenityHub = () => {
   const [activeTab, setActiveTab] = useState('book');
   const [selectedAmenity, setSelectedAmenity] = useState(null);
+  const [amenities, setAmenities] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const amenities = [
-    { id: 'a1', name: 'Elite Clubhouse', desc: 'Central hall for parties and gatherings.', rate: '₹5,000/day', image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205', rating: 4.9 },
-    { id: 'a2', name: 'Olympic Pool', desc: 'Temperature-controlled lap pool.', rate: 'Inclusive', image: 'https://images.unsplash.com/photo-1560090562-1672ae19d3f5', rating: 4.7 },
-    { id: 'a3', name: 'Pro Squash Court', desc: 'Air-conditioned wooden flooring.', rate: '₹200/hr', image: 'https://images.unsplash.com/photo-1541250848049-b4f7141dca3f', rating: 4.5 },
-    { id: 'a4', name: 'Sunset Rooftop', desc: 'Evening events and meditation space.', rate: '₹1,500/slot', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e152f', rating: 4.8 },
-  ];
-
-  const bookings = [
-      { id: 'b1', item: 'Olympic Pool', date: 'Mar 20, 2026', slot: '07:00 AM - 08:00 AM', status: 'Confirmed' },
-      { id: 'b2', item: 'Pro Squash Court', date: 'Mar 21, 2026', slot: '06:00 PM - 07:00 PM', status: 'Pending Approval' }
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const data = await DataService.getAmenities();
+            setAmenities(data || []);
+        } catch (err) {
+            console.error("Amenity Fetch Error:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchData();
+  }, []);
 
   const handleBook = (amenity) => {
     toast.success(`Booking request sent for ${amenity.name}`);

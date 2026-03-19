@@ -19,15 +19,28 @@ const ComplaintSystem = () => {
   ];
 
   useEffect(() => {
-    setComplaints(DataService.getComplaints());
+    const fetchData = async () => {
+        try {
+            const data = await DataService.getComplaints();
+            setComplaints(data || []);
+        } catch (err) {
+            console.error("Complaint Fetch Error:", err);
+        }
+    };
+    fetchData();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    DataService.addComplaint(newComplaint);
-    setComplaints(DataService.getComplaints());
-    setShowModal(false);
-    toast.success('Complaint Registered Successfully!');
+    try {
+        await DataService.addComplaint(newComplaint);
+        const data = await DataService.getComplaints();
+        setComplaints(data);
+        setShowModal(false);
+        toast.success('Complaint Registered Successfully!');
+    } catch (err) {
+        toast.error('Failed to register complaint');
+    }
   };
 
   return (

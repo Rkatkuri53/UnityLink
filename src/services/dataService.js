@@ -1,98 +1,93 @@
+import { supabase } from './supabase';
+
 /**
- * UnityLink Persistent Data Service
- * Simulates a Production Backend/Database using LocalStorage
+ * UnityLink Production Data Service
+ * Connects to Supabase PostgreSQL for real-time society management.
  */
 
-const STORAGE_KEY = 'unitylink_v1_data';
-
-const initialData = {
-    residents: [
-        { id: 'res-101', name: 'John Doe', unit: 'B-1402', status: 'Paid', wallet: 42.50 },
-        { id: 'res-102', name: 'Alice Smith', unit: 'A-901', status: 'Unpaid', wallet: 10.00 },
-    ],
-    expenses: [
-        { id: 1, date: '2026-03-15', desc: 'Water Tank Cleaning', category: 'Maintenance', amount: 450, status: 'Verified' },
-        { id: 2, date: '2026-03-12', desc: 'Security Staff Salary', category: 'Security', amount: 2400, status: 'Verified' },
-    ],
-    marketplace: [
-        { id: 1, name: "The Gourmet Crust", owner: "Aditi S.", type: "Food", rating: 4.8, desc: "Artisan sourdough and healthy desserts baked at Home B-1402.", priceRange: "$$" },
-    ],
-    complaints: [
-        { id: 1, resident: 'A-901', category: 'Nuisance: Pets', desc: 'Frequent barking late at night.', status: 'Pending', assignedTo: 'Security Head', time: '2026-03-18' },
-    ],
-    staff: [
-        { id: 's1', name: 'Raju Kumar', role: 'Maid', entryTime: '08:45 AM', rating: 4.5, units: ['B-1402', 'A-901'] },
-        { id: 's2', name: 'Surendra Singh', role: 'Driver', entryTime: '09:15 AM', rating: 4.8, units: ['B-1402'] },
-    ],
-    amenities: [
-        { id: 'a1', name: 'Squash Court', slots: ['6AM-7AM', '7AM-8AM', '6PM-7PM'], active: true },
-        { id: 'a2', name: 'Mini Theater', slots: ['4PM-7PM', '7PM-10PM'], active: true },
-    ],
-    iot: {
-        water: 72,
-        fuel: 45
-    }
-};
-
 const DataService = {
-    // Initialize Data
-    init: () => {
-        if (!localStorage.getItem(STORAGE_KEY)) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
-        }
+    // 1. Residents / Profiles
+    getResidents: async () => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*');
+        if (error) throw error;
+        return data;
     },
 
-    // Generic Get
-    getData: () => {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY));
+    // 2. Expenses / Finance
+    getExpenses: async () => {
+        const { data, error } = await supabase
+            .from('expenses')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data;
     },
 
-    // Generic Update
-    saveData: (data) => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        // Broadcast change for multi-component reactivity
-        window.dispatchEvent(new Event('unitylink_data_changed'));
+    addExpense: async (expense) => {
+        const { data, error } = await supabase
+            .from('expenses')
+            .insert([expense])
+            .select();
+        if (error) throw error;
+        return data[0];
     },
 
-    // Specialized Methods
-    getResidents: () => DataService.getData().residents,
-    addResident: (resident) => {
-        const db = DataService.getData();
-        db.residents.push({ ...resident, id: Date.now().toString() });
-        DataService.saveData(db);
+    // 3. Complaints / Governance
+    getComplaints: async () => {
+        const { data, error } = await supabase
+            .from('complaints')
+            .select('*, profiles(full_name, unit_no)')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data;
     },
 
-    getExpenses: () => DataService.getData().expenses,
-    addExpense: (expense) => {
-        const db = DataService.getData();
-        db.expenses.push({ ...expense, id: Date.now() });
-        DataService.saveData(db);
+    addComplaint: async (complaint) => {
+        const { data, error } = await supabase
+            .from('complaints')
+            .insert([complaint])
+            .select();
+        if (error) throw error;
+        return data[0];
     },
 
-    // Marketplace
-    getMarketplace: () => DataService.getData().marketplace,
+    updateComplaint: async (id, updates) => {
+        const { data, error } = await supabase
+            .from('complaints')
+            .update(updates)
+            .eq('id', id)
+            .select();
+        if (error) throw error;
+        return data[0];
+    },
 
-    // Complaints
-    getComplaints: () => DataService.getData().complaints,
-    addComplaint: (complaint) => {
-        const db = DataService.getData();
-        db.complaints.unshift({ ...complaint, id: Date.now(), status: 'Pending', time: new Date().toISOString() });
-        DataService.saveData(db);
+    // 4. Staff Management
+    getStaff: async () => {
+        const { data, error } = await supabase
+            .from('staff')
+            .select('*');
+        if (error) throw error;
+        return data;
     },
-    updateComplaint: (id, updates) => {
-        const db = DataService.getData();
-        const index = db.complaints.findIndex(c => c.id === id);
-        if (index !== -1) {
-            db.complaints[index] = { ...db.complaints[index], ...updates };
-            DataService.saveData(db);
-        }
+
+    // 5. Amenity Hub
+    getAmenities: async () => {
+        const { data, error } = await supabase
+            .from('amenities')
+            .select('*');
+        if (error) throw error;
+        return data;
     },
-    
-    // Auth Helper
-    getCurrentUser: () => {
-        const role = localStorage.getItem('unitylink_role') || 'Resident';
-        const db = DataService.getData();
-        return db.residents.find(r => r.role === role) || db.residents[0];
+
+    // 6. IoT Streams (Simulated via Realtime subscription logic)
+    onIoTUpdate: (callback) => {
+        const subscription = supabase
+            .channel('iot_updates')
+            .on('broadcast', { event: 'sensor_data' }, (payload) => callback(payload))
+            .subscribe();
+        return () => supabase.removeChannel(subscription);
     }
 };
 

@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
-import { Landmark, FileText, ChevronRight, Eye, Download, Search, Filter } from 'lucide-react';
-
-const expenditures = [
-  { id: 1, date: 'Mar 18, 2026', desc: 'Main Gate Painting', amount: 850, category: 'Maintenance', billUrl: 'bill1.jpg', approved: true },
-  { id: 2, date: 'Mar 15, 2026', desc: 'Emergency Plumbing - Block A', amount: 120, category: 'Repairs', billUrl: 'bill2.jpg', approved: true },
-  { id: 3, date: 'Mar 10, 2026', desc: 'Garden Monthly Upkeep', amount: 300, category: 'Landscaping', billUrl: 'bill3.jpg', approved: true }
-];
+import React, { useState, useEffect } from 'react';
+import { Landmark, FileText, ChevronRight, Eye, Download, Search, Filter, Loader2 } from 'lucide-react';
+import DataService from '../services/dataService';
 
 const ExpenditureLedger = ({ onViewBill }) => {
+  const [expenditures, setExpenditures] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await DataService.getExpenses();
+        setExpenditures(data);
+      } catch (err) {
+        console.error("Ledger Fetch Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -38,7 +49,20 @@ const ExpenditureLedger = ({ onViewBill }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {expenditures.map(exp => (
+            {loading ? (
+                <tr>
+                    <td colSpan="5" className="px-6 py-12 text-center text-slate-500">
+                        <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="animate-spin text-emerald-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Syncing with Ledger...</span>
+                        </div>
+                    </td>
+                </tr>
+            ) : expenditures.length === 0 ? (
+                <tr>
+                    <td colSpan="5" className="px-6 py-12 text-center text-slate-500 italic text-sm">No expenditures recorded yet.</td>
+                </tr>
+            ) : expenditures.map(exp => (
               <tr key={exp.id} className="hover:bg-white/5 transition-colors group">
                 <td className="px-6 py-4 text-xs font-medium text-slate-400">{exp.date}</td>
                 <td className="px-6 py-4 text-sm font-bold">{exp.desc}</td>
