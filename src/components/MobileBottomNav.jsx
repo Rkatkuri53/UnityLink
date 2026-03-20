@@ -52,7 +52,6 @@ const MobileBottomNav = ({ activeTab, onTabChange }) => {
       </div>
     </div>
   );
-  );
 };
 
 export default MobileBottomNav;
