@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 @import './styles/theme.css';
 
 /* Discard boilerplate templates */
@@ -11,7 +13,7 @@
 .district-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: var(--spacing-md); /* 16px Gutter */
+    gap: var(--spacing-md);
     width: 100%;
 }
 
@@ -19,7 +21,7 @@
     width: 100%;
     margin-right: auto;
     margin-left: auto;
-    padding-right: var(--spacing-lg); /* 24px Margin */
+    padding-right: var(--spacing-lg);
     padding-left: var(--spacing-lg);
 }
 
@@ -80,7 +82,6 @@
     box-shadow: 0 0 0 4px var(--primary-surface);
 }
 
-/* Safe area support */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
