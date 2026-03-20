@@ -1,85 +1,99 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Bell, User, Home, Megaphone, Landmark, Users, Zap, Star } from 'lucide-react';
+import { Shield, Bell, User, LayoutDashboard, MessageSquareText, FileSpreadsheet, Users2, Activity, Shapes } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
+import { motion } from 'framer-motion';
 
 const Layout = ({ children, activeTab, onTabChange }) => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--text-main)] flex">
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 bg-white border-r border-slate-200 sticky top-0 h-screen flex-col flex-shrink-0 z-[1001]">
-        <div className="p-6 border-b border-slate-100 flex items-center gap-2 mb-4">
-            <Shield className="text-blue-600" size={32} />
-            <span className="text-xl font-black tracking-tight text-slate-900 leading-none">UNITY<span className="text-blue-600">LINK</span></span>
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex overflow-hidden">
+      {/* Custom Pro Sidebar */}
+      <aside className="hidden lg:flex w-72 bg-white border-r border-slate-200 static h-screen flex-col flex-shrink-0">
+        <div className="p-8 flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                <Shield size={22} strokeWidth={2.5} />
+            </div>
+            <div>
+                <span className="text-xl font-black tracking-tight text-slate-900 leading-none block">UNITY<span className="text-blue-600">LINK</span></span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 block">District OS</span>
+            </div>
         </div>
         
-        <nav className="flex-1 px-4 space-y-1">
-            <SidebarLink active={activeTab === 'overview'} onClick={() => onTabChange('overview')} icon={<Home size={18}/>} label="Dashboard" />
-            <SidebarLink active={activeTab === 'complaints'} onClick={() => onTabChange('complaints')} icon={<Megaphone size={18}/>} label="Grievances" />
-            <SidebarLink active={activeTab === 'financials'} onClick={() => onTabChange('financials')} icon={<Landmark size={18}/>} label="Finance & Audit" />
-            <SidebarLink active={activeTab === 'staff'} onClick={() => onTabChange('staff')} icon={<Users size={18}/>} label="Staff Hub" />
-            <SidebarLink active={activeTab === 'amenities'} onClick={() => onTabChange('amenities')} icon={<Star size={18}/>} label="Facilities" />
-            <SidebarLink active={activeTab === 'iot'} onClick={() => onTabChange('iot')} icon={<Zap size={18}/>} label="District Sensors" />
+        <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+            <SidebarItem active={activeTab === 'overview'} onClick={() => onTabChange('overview')} icon={<LayoutDashboard size={20}/>} label="Overview" />
+            <SidebarItem active={activeTab === 'complaints'} onClick={() => onTabChange('complaints')} icon={<MessageSquareText size={20}/>} label="Citizen Hub" />
+            <SidebarItem active={activeTab === 'financials'} onClick={() => onTabChange('financials')} icon={<FileSpreadsheet size={20}/>} label="Audits & Ledger" />
+            <SidebarItem active={activeTab === 'staff'} onClick={() => onTabChange('staff')} icon={<Users2 size={20}/>} label="Service Staff" />
+            <SidebarItem active={activeTab === 'amenities'} onClick={() => onTabChange('amenities')} icon={<Shapes size={20}/>} label="Facilities" />
+            <SidebarItem active={activeTab === 'iot'} onClick={() => onTabChange('iot')} icon={<Activity size={20}/>} label="IoT Sensors" />
         </nav>
 
-        <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-            <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm border border-slate-200">
-                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
-                    <User size={16} />
+        <div className="p-6">
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-600 border-4 border-white shadow-sm flex items-center justify-center text-white font-black">
+                    {user.name && user.name[0]}
                 </div>
                 <div className="flex-1 min-w-0">
-                    <p className="text-xs font-black truncate">{user.name}</p>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase">{user.role}</p>
+                    <p className="text-sm font-black text-slate-900 truncate">{user.name}</p>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">{user.role}</p>
                 </div>
             </div>
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center px-6 justify-between lg:justify-end sticky top-0 z-[1000]">
-          <div className="lg:hidden flex items-center gap-2">
-            <Shield className="text-blue-600" size={24} />
-            <span className="text-lg font-black tracking-tighter text-slate-900">UNITY<span className="text-blue-600">LINK</span></span>
+      <div className="flex-1 flex flex-col min-w-0 relative h-screen">
+        {/* Custom Header */}
+        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center px-8 justify-between sticky top-0 z-[1000]">
+          <div className="flex-1">
+             <h2 className="text-lg font-black text-slate-900 capitalize tracking-tight px-4 border-l-4 border-blue-600 leading-none">
+                 {activeTab.replace(/([A-Z])/g, ' $1').trim()}
+             </h2>
           </div>
           
-          <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-slate-50 rounded-lg relative">
-                <Bell size={20} className="text-slate-500" />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
-            <div className="h-4 w-[1px] bg-slate-200"></div>
-            <button className="flex items-center gap-2 hover:bg-slate-50 p-1.5 rounded-lg border border-transparent hover:border-slate-100 transition-all">
-                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-black">
-                    {user.name && user.name[0]}
-                </div>
-                <span className="hidden sm:inline text-xs font-bold text-slate-700">{user.name && user.name.split(' ')[0]}</span>
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full border border-slate-200">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">System Online</span>
+            </div>
+            
+            <button className="w-10 h-10 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-all flex items-center justify-center relative">
+                <Bell size={20} />
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-x-hidden p-6 lg:p-8 pb-32 lg:pb-8">
-            <div className="max-w-7xl mx-auto">
-                {children}
+        {/* Fluid Main Area */}
+        <main className="flex-1 overflow-y-auto w-full">
+            <div className="container-fluid py-10 pb-32 lg:pb-16 max-w-[1600px] mx-auto">
+                <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                >
+                    {children}
+                </motion.div>
             </div>
         </main>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Interaction Layer */}
       <MobileBottomNav activeTab={activeTab} onTabChange={onTabChange} />
     </div>
   );
 };
 
-const SidebarLink = ({ active, onClick, icon, label }) => (
+const SidebarItem = ({ active, onClick, icon, label }) => (
     <button 
         onClick={onClick}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${active ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}
+        className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-semibold transition-all group ${active ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/20 font-bold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
     >
-        {icon} {label}
+        <span className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>{icon}</span>
+        <span className="tracking-tight">{label}</span>
+        {active && <motion.div layoutId="sidebarActive" className="ml-auto w-1.5 h-1.5 bg-white rounded-full" />}
     </button>
 );
 

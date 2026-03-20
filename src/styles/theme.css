@@ -1,39 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:wght@600;700;800&display=swap');
+
 :root {
-  /* High-Fidelity District Colors */
-  --primary: #2563eb; /* Pro Blue */
-  --primary-glow: rgba(37, 99, 235, 0.1);
-  --secondary: #0f172a; /* Deep Navy */
-  --accent: #10b981; /* Success Green */
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  /* Dynamic Palette: District Pro Blue */
+  --primary: #0061ff;
+  --primary-surface: #eef4ff;
+  --primary-on-surface: #003a9c;
   
-  --background: #f8fafc; /* Professional Off-White */
-  --surface: #ffffff; /* Solid White Cards */
-  --surface-border: #e2e8f0;
+  --secondary: #475569;
+  --secondary-surface: #f1f5f9;
   
-  --text-main: #0f172a; /* High Contrast Navy */
-  --text-muted: #64748b;
+  --success: #059669;
+  --warning: #d97706;
+  --error: #dc2626;
+
+  /* Neutral Background System */
+  --background: #ffffff;
+  --surface: #f8fafc;
+  --surface-variant: #f1f5f9;
+  --outline: #e2e8f0;
   
-  /* Spacing & Curves */
-  --radius-sm: 6px;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+
+  /* Typography Scale */
+  --font-header: 'Lexend', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  /* Fluid Spacing (Gutter: 16px, Margin: 24px) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Custom Elevation: Soft Material 3 */
+  --elevation-1: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+  --elevation-3: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  --elevation-4: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 20px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
   
-  /* Shadows: Material-like elevation */
-  --shadow-premium: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  /* Interaction Timing */
+  --transition-fast: 200ms ease-in-out;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: var(--background);
-  color: var(--text-main);
-  min-height: 100vh;
-  overflow-x: hidden;
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-* {
-  box-sizing: border-box;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-header);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
 }

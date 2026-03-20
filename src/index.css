@@ -1,40 +1,93 @@
 @import './styles/theme.css';
-@import './styles/glass.css';
 
-:root {
-  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+/* Discard boilerplate templates */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-#root {
-  max-width: 100%;
+/* Fluid Grid Layer */
+.district-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--spacing-md); /* 16px Gutter */
+    width: 100%;
 }
 
-.pb-safe {
-  padding-bottom: var(--safe-area-bottom);
+.container-fluid {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: var(--spacing-lg); /* 24px Margin */
+    padding-left: var(--spacing-lg);
 }
 
-/* Scrollbar Styling for Pro look */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+/* Custom Interaction Layer */
+.btn-neutral, .btn-primary, .input-custom, .card-custom {
+    transition: var(--transition-fast);
 }
 
-@media (max-width: 640px) {
-  html {
+.card-custom {
+    background: var(--background);
+    border: 1px solid var(--outline);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--elevation-1);
+}
+
+.card-custom:hover {
+    box-shadow: var(--elevation-3);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    font-family: var(--font-header);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--elevation-2);
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+    box-shadow: var(--elevation-3);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.input-custom {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--surface);
+    border: 1px solid var(--outline);
+    border-radius: var(--radius-md);
     font-size: 14px;
-  }
+    outline: none;
+}
+
+.input-custom:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px var(--primary-surface);
+}
+
+/* Safe area support */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-right: var(--spacing-md);
+        padding-left: var(--spacing-md);
+    }
 }
