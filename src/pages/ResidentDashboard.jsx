@@ -182,7 +182,7 @@ const ServiceTile = ({ icon: Icon, label, color }) => (
             <Icon size={20} />
         </div>
         <span className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{label}</span>
-    </motion.button>
+    </motion.div>
 );
 
 export default ResidentDashboard;

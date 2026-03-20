@@ -9,7 +9,15 @@ const AdminComplaints = () => {
   const staff = ['Security Head', 'Maintenance Mgr', 'Society Secretary', 'Plumber Team', 'Electrician Team'];
 
   useEffect(() => {
-    setComplaints(DataService.getComplaints());
+    const load = async () => {
+        try {
+            const data = await DataService.getComplaints();
+            setComplaints(data || []);
+        } catch (err) {
+            console.error("Fetch error:", err);
+        }
+    };
+    load();
   }, []);
 
   const handleAssign = (id, staffName) => {
