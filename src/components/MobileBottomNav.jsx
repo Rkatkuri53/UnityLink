@@ -1,55 +1,71 @@
 import React from 'react';
-import { Home, ShieldAlert, MessageSquare, User, Grid, PieChart, Upload, MessageSquareWarning } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Home, ShieldAlert, MessageSquare, User, LayoutGrid, PieChart, Landmark, Megaphone } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
 const MobileBottomNav = ({ activeTab, onTabChange }) => {
   const { user } = useAuth();
   
   const residentTabs = [
-    { id: 'overview', icon: <Home size={20} />, label: 'Home' },
-    { id: 'security', icon: <ShieldAlert size={20} />, label: 'Safety' },
-    { id: 'chat', icon: <MessageSquare size={20} />, label: 'Chat' },
-    { id: 'staff', icon: <User size={20} />, label: 'Staff' },
+    { id: 'overview', icon: <Home size={22} />, label: 'Home' },
+    { id: 'security', icon: <ShieldAlert size={22} />, label: 'Safety' },
+    { id: 'chat', icon: <MessageSquare size={22} />, label: 'Chat' },
+    { id: 'staff', icon: <User size={22} />, label: 'Staff' },
   ];
 
   const adminTabs = [
-    { id: 'analytics', icon: <PieChart size={20} />, label: 'Insights' },
-    { id: 'expenses', icon: <Upload size={20} />, label: 'Bills' },
-    { id: 'complaints', icon: <MessageSquareWarning size={20} />, label: 'Grievance' },
-    { id: 'marketplace', icon: <Grid size={20} />, label: 'Ads' },
+    { id: 'overview', icon: <LayoutGrid size={22} />, label: 'HQ' },
+    { id: 'complaints', icon: <Megaphone size={22} />, label: 'Alerts' },
+    { id: 'financials', icon: <Landmark size={22} />, label: 'Bank' },
+    { id: 'staff', icon: <User size={22} />, label: 'Team' },
   ];
 
-  const tabs = user.role === 'Society-Admin' ? adminTabs : residentTabs;
+  const tabs = user?.role === 'Society-Admin' ? adminTabs : residentTabs;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[12000] lg:hidden bg-white border-t border-slate-200 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
-      <div className="flex justify-around items-center h-16 px-2">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[5000] lg:hidden w-[90%] max-w-sm">
+      <nav className="bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] px-4 py-2 shadow-2xl flex justify-between items-center relative overflow-hidden">
+        {/* Animated Background Highlight */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <AnimatePresence>
+                {tabs.map((tab, idx) => (
+                    activeTab === tab.id && (
+                        <motion.div
+                            key="pill"
+                            layoutId="activePill"
+                            className="absolute h-10 w-[22%] bg-blue-600 rounded-2xl"
+                            style={{ left: `${(idx * 25) + 2}%`, top: '10px' }}
+                            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                    )
+                ))}
+            </AnimatePresence>
+        </div>
+
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className="flex flex-col items-center justify-center relative flex-1"
+              className="flex flex-col items-center justify-center p-2 relative z-10 w-full"
             >
-              {isActive && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute -top-[1px] w-12 h-0.5 bg-blue-600 rounded-full"
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
-              )}
-              <div className={`transition-all duration-300 ${isActive ? 'text-blue-600 scale-110' : 'text-slate-400'}`}>
+              <motion.div 
+                animate={{ 
+                    scale: isActive ? 1.1 : 1,
+                    y: isActive ? -2 : 0 
+                }}
+                className={`transition-colors duration-300 ${isActive ? 'text-white' : 'text-slate-500'}`}
+              >
                 {tab.icon}
-              </div>
-              <span className={`text-[8px] font-black uppercase mt-1 tracking-tighter ${isActive ? 'text-blue-600' : 'text-slate-400'}`}>
+              </motion.div>
+              <span className={`text-[9px] font-bold mt-1 tracking-tight transition-colors duration-300 ${isActive ? 'text-white' : 'text-slate-500'}`}>
                 {tab.label}
               </span>
             </button>
           );
         })}
-      </div>
+      </nav>
     </div>
   );
 };
