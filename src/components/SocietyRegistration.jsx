@@ -1,188 +1,172 @@
 import React, { useState } from 'react';
-import { ShieldCheck, FileText, MapPin, Users, Info, Check, Upload, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Shield, Building2, LayoutGrid, FileCheck, ArrowRight, UserPlus, Zap } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-const SocietyRegistration = ({ onComplete }) => {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    societyName: '',
-    regType: 'Housing',
-    address: '',
-    state: 'Maharashtra', // Default for demonstration
-    district: '',
-    memberCount: '',
-    chairman: '',
-    secretary: '',
-    treasurer: ''
-  });
+const SocietyRegistration = () => {
+    const { register, user } = useAuth();
+    const [step, setStep] = useState(1);
+    const [data, setData] = useState({
+        societyName: '',
+        units: '',
+        adminName: '',
+        plan: 'Basic'
+    });
 
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
+    const handleFinish = () => {
+        register({
+            ...user,
+            name: data.adminName || user?.name || 'Admin',
+            society: data.societyName,
+            role: 'Society-Admin',
+            onboarded: true
+        });
+    };
 
-  return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-24">
-      {/* State Progress Bar */}
-      <div className="flex justify-between items-center px-4">
-        {[1, 2, 3, 4].map(s => (
-          <div key={s} className="flex flex-col items-center gap-2 group">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${step >= s ? 'bg-emerald-500 border-emerald-500 text-black font-black' : 'border-white/10 text-slate-500'}`}>
-              {step > s ? <Check size={20} /> : s}
-            </div>
-            <span className={`text-[8px] font-black uppercase tracking-widest ${step >= s ? 'text-emerald-500' : 'text-slate-600'}`}>
-                {s === 1 ? 'IDENTITY' : s === 2 ? 'LOCATION' : s === 3 ? 'COMMITTEE' : 'DOCUMENTS'}
-            </span>
-          </div>
-        ))}
-      </div>
+    return (
+        <div className="min-h-screen bg-slate-900 text-white flex flex-col relative overflow-hidden">
+            {/* Dark Mode Onboarding - "Master Command" Feel */}
+            <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px]"></div>
+            <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-indigo-600/10 rounded-full blur-[120px]"></div>
 
-      <div className="glass-card p-12 border-white/10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8 opacity-5">
-            <ShieldCheck size={200} />
-        </div>
-
-        <AnimatePresence mode="wait">
-          {step === 1 && (
-            <motion.div 
-                key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
-            >
-                <div>
-                   <h3 className="text-3xl font-black mb-2">Registration Identity</h3>
-                   <p className="text-slate-400 text-sm">Basic information as per state government rules.</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InputField label="Society Full Name" placeholder="e.g. Skyline Heights CHS" value={formData.societyName} onChange={v => setFormData({...formData, societyName: v})} />
-                    <SelectField label="Society Category" options={['Housing', 'Commercial', 'Mixed Use', 'Villa Community']} value={formData.regType} onChange={v => setFormData({...formData, regType: v})} />
-                    <InputField label="Total Units/Flats" placeholder="e.g. 120" type="number" value={formData.memberCount} onChange={v => setFormData({...formData, memberCount: v})} />
-                    <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-xl flex gap-3">
-                        <Info size={20} className="text-blue-500 shrink-0" />
-                        <p className="text-[10px] text-slate-400 leading-normal">Registration rule: Any complex with 10+ owners must register a Cooperative Housing Society (CHS).</p>
+            <header className="p-8 lg:p-12 flex justify-between items-center relative z-10">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        <Shield size={22} />
                     </div>
+                    <span className="text-xl font-black tracking-tight">UNITY<span className="text-blue-600">LINK</span></span>
                 </div>
-            </motion.div>
-          )}
-
-          {step === 2 && (
-            <motion.div 
-                key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
-            >
-                <div>
-                   <h3 className="text-3xl font-black mb-2">Location & Jurisdiction</h3>
-                   <p className="text-slate-400 text-sm">Determines the taxing and compliance node.</p>
+                <div className="flex gap-2">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className={`w-12 h-1 rounded-full ${i <= step ? 'bg-blue-600' : 'bg-white/10'}`}></div>
+                    ))}
                 </div>
+            </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InputField label="Registered Address" placeholder="Street, Plot No, Block" full value={formData.address} onChange={v => setFormData({...formData, address: v})} />
-                    <InputField label="District" placeholder="e.g. Mumbai Suburban" value={formData.district} onChange={v => setFormData({...formData, district: v})} />
-                    <InputField label="State" placeholder="Maharashtra" value={formData.state} disabled />
+            <main className="flex-1 flex items-center justify-center p-8 relative z-10">
+                <div className="w-full max-w-xl">
+                    <AnimatePresence mode="wait">
+                        {step === 1 && (
+                            <motion.div 
+                                key="step1"
+                                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+                                className="space-y-10"
+                            >
+                                <div className="space-y-4">
+                                    <h1 className="text-5xl font-black tracking-tight leading-[1.1]">Launch your <span className="text-blue-500">Digital Society.</span></h1>
+                                    <p className="text-slate-400 text-lg font-medium">Join 500+ communities managing security, finance, and living with UnityLink.</p>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-500 px-1 tracking-widest">Community Name</label>
+                                        <div className="relative">
+                                            <Building2 className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+                                            <input 
+                                                className="w-full h-20 bg-white/5 border-2 border-white/10 rounded-[2.5rem] pl-16 pr-8 text-xl font-bold focus:border-blue-600 outline-none transition-all"
+                                                placeholder="e.g. Skyline Heights"
+                                                onChange={(e) => setData({...data, societyName: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => setStep(2)}
+                                        className="w-full h-20 bg-blue-600 hover:bg-blue-700 rounded-[2.5rem] font-black uppercase tracking-widest text-sm shadow-2xl shadow-blue-600/20 transition-all flex items-center justify-center gap-4"
+                                    >
+                                        Next Step <ArrowRight size={20} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 2 && (
+                            <motion.div 
+                                key="step2"
+                                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+                                className="space-y-10"
+                            >
+                                <div className="space-y-4">
+                                    <h1 className="text-5xl font-black tracking-tight leading-[1.1]">Management <span className="text-blue-500">Profile.</span></h1>
+                                    <p className="text-slate-400 text-lg font-medium">Who will be the primary administrator for <strong>{data.societyName}</strong>?</p>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase text-slate-500 px-1 tracking-widest">Admin Full Name</label>
+                                            <input 
+                                                className="w-full h-16 bg-white/5 border-2 border-white/10 rounded-2xl px-6 font-bold focus:border-blue-600 outline-none"
+                                                placeholder="Alice Smith"
+                                                onChange={(e) => setData({...data, adminName: e.target.value})}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase text-slate-500 px-1 tracking-widest">Total Units</label>
+                                            <input 
+                                                className="w-full h-16 bg-white/5 border-2 border-white/10 rounded-2xl px-6 font-bold focus:border-blue-600 outline-none"
+                                                placeholder="e.g. 150"
+                                                onChange={(e) => setData({...data, units: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="p-6 bg-white/5 border border-white/10 rounded-3xl space-y-4">
+                                        <div className="flex items-center gap-3 text-emerald-400">
+                                            <Zap size={20} />
+                                            <span className="text-xs font-black uppercase tracking-widest">Instant Activation</span>
+                                        </div>
+                                        <p className="text-sm text-slate-400 font-medium">By clicking continue, you agree to deploy the Standard Governance set for your region. You can customize this later.</p>
+                                    </div>
+
+                                    <button 
+                                        onClick={() => setStep(3)}
+                                        className="w-full h-20 bg-blue-600 hover:bg-blue-700 rounded-[2.5rem] font-black uppercase tracking-widest text-sm shadow-2xl shadow-blue-600/20 transition-all flex items-center justify-center gap-4"
+                                    >
+                                        Finalize Deployment <ArrowRight size={20} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 3 && (
+                            <motion.div 
+                                key="step3"
+                                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+                                className="text-center space-y-10"
+                            >
+                                <div className="w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-600/40 mx-auto rotate-12">
+                                    <FileCheck size={48} />
+                                </div>
+
+                                <div className="space-y-3">
+                                    <h1 className="text-5xl font-black tracking-tight">System Ready.</h1>
+                                    <p className="text-slate-400 text-lg font-medium">Your digital ecosystem for <strong>{data.societyName}</strong> is ready for residents.</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <FeatureCard icon={<UserPlus size={18}/>} label="Resident Invites" />
+                                    <FeatureCard icon={<Shield size={18}/>} label="Security Kiosk" />
+                                </div>
+
+                                <button 
+                                    onClick={handleFinish}
+                                    className="w-full h-20 bg-white text-slate-900 rounded-[2.5rem] font-black uppercase tracking-widest text-sm transition-all hover:scale-[1.02] flex items-center justify-center gap-4"
+                                >
+                                    Enter Admin Command Center <LayoutGrid size={20} />
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
-            </motion.div>
-          )}
-
-          {step === 3 && (
-            <motion.div 
-                key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
-            >
-                <div>
-                   <h3 className="text-3xl font-black mb-2">Elected Committee</h3>
-                   <p className="text-slate-400 text-sm">The legal signatories for society resolutions.</p>
-                </div>
-
-                <div className="space-y-4">
-                    <InputField label="Chairman Name" placeholder="Full legal name" value={formData.chairman} onChange={v => setFormData({...formData, chairman: v})} />
-                    <InputField label="Secretary Name" placeholder="Full legal name" value={formData.secretary} onChange={v => setFormData({...formData, secretary: v})} />
-                    <InputField label="Treasurer Name" placeholder="Full legal name" value={formData.treasurer} onChange={v => setFormData({...formData, treasurer: v})} />
-                </div>
-            </motion.div>
-          )}
-
-          {step === 4 && (
-            <motion.div 
-                key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
-            >
-                <div>
-                   <h3 className="text-3xl font-black mb-2">Compliance Vault</h3>
-                   <p className="text-slate-400 text-sm">Upload mandatory legal documents.</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <DocUpload label="Society Registration Cert" />
-                    <DocUpload label="PAN Card of Society" />
-                    <DocUpload label="Approved Bye-Laws" />
-                    <DocUpload label="Land Title / Sale Deed" />
-                </div>
-
-                <div className="p-6 bg-amber-500/5 border border-amber-500/20 rounded-2xl flex gap-4">
-                    <AlertCircle size={24} className="text-amber-500 shrink-0" />
-                    <div>
-                        <h4 className="font-bold text-sm">Aadhaar Verification Pending</h4>
-                        <p className="text-[10px] text-slate-500">Signatories will receive an OTP for e-KYC after form submission to verify committee validity.</p>
-                    </div>
-                </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="mt-12 pt-8 border-t border-white/5 flex justify-between">
-            <button 
-                onClick={prevStep} 
-                disabled={step === 1}
-                className={`px-8 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${step === 1 ? 'opacity-0' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`}
-            >
-                Back
-            </button>
-            <button 
-                onClick={step === 4 ? onComplete : nextStep}
-                className="px-12 py-3 bg-emerald-500 text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-95 transition-all shadow-[0_0_30px_#10b98133]"
-            >
-                {step === 4 ? 'Verify & Finalize' : 'Continue'}
-            </button>
+            </main>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
-const InputField = ({ label, placeholder, type = 'text', full, value, onChange, disabled }) => (
-    <div className={full ? 'md:col-span-2' : ''}>
-        <label className="text-[10px] font-black uppercase text-slate-500 block mb-2">{label}</label>
-        <input 
-            type={type} 
-            placeholder={placeholder} 
-            value={value}
-            onChange={e => onChange(e.target.value)}
-            disabled={disabled}
-            className={`w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm focus:border-emerald-500 outline-none transition-all ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-        />
-    </div>
-);
-
-const SelectField = ({ label, options, value, onChange }) => (
-    <div>
-        <label className="text-[10px] font-black uppercase text-slate-500 block mb-2">{label}</label>
-        <select 
-            value={value}
-            onChange={e => onChange(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm focus:border-emerald-500 outline-none transition-all appearance-none"
-        >
-            {options.map(opt => <option key={opt} value={opt} className="bg-[#020617]">{opt}</option>)}
-        </select>
-    </div>
-);
-
-const DocUpload = ({ label }) => (
-    <div className="border border-white/10 rounded-xl p-4 flex items-center justify-between group hover:border-emerald-500/30 transition-all cursor-pointer bg-white/5">
-        <div className="flex items-center gap-3">
-             <div className="p-2 bg-white/5 rounded-lg text-slate-500 group-hover:text-emerald-500">
-                <FileText size={18} />
-             </div>
-             <span className="text-[10px] font-black uppercase tracking-tight text-slate-400">{label}</span>
-        </div>
-        <Upload size={16} className="text-slate-600" />
+const FeatureCard = ({ icon, label }) => (
+    <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-3">
+        <div className="text-blue-500">{icon}</div>
+        <span className="text-[10px] font-black uppercase tracking-widest">{label}</span>
     </div>
 );
 

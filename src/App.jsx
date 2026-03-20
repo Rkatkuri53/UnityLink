@@ -3,8 +3,10 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
 import ResidentDashboard from './pages/ResidentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import GateSecurity from './pages/GateSecurity';
+import Login from './pages/Login';
 import BillViewer from './components/BillViewer';
-import { Users, Shield, Lock } from 'lucide-react';
+import { Users, Shield, Lock, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './index.css';
 
@@ -18,21 +20,42 @@ import AmenityHub from './components/AmenityHub';
 import IoTDashboard from './components/IoTDashboard';
 
 function App() {
-  const [activeModule, setActiveModule] = useState('overview');
   return (
     <AuthProvider>
-      <MainContent activeModule={activeModule} setActiveModule={setActiveModule} />
+      <MainApp />
     </AuthProvider>
   );
 }
 
+function MainApp() {
+  const { user, loading, isOnboarding } = useAuth();
+  const [activeModule, setActiveModule] = useState('overview');
+
+  if (loading) return null;
+
+  if (!user) {
+    return <Login />;
+  }
+
+  // If user is logged in but not onboarded
+  if (!user.onboarded) {
+    if (user.role === 'Society-Admin') return <SocietyRegistration />;
+    return <ResidentOnboarding />;
+  }
+
+  return (
+    <MainContent activeModule={activeModule} setActiveModule={setActiveModule} />
+  );
+}
+
 function MainContent({ activeModule, setActiveModule }) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [selectedBill, setSelectedBill] = useState(null);
 
   const renderContent = () => {
     switch(activeModule) {
       case 'overview': 
+        if (user.role === 'Gate-Guard') return <GateSecurity />;
         return user.role === 'Society-Admin' ? <AdminDashboard /> : <ResidentDashboard onShowBill={setSelectedBill} />;
       case 'complaints':
         return user.role === 'Society-Admin' ? <AdminComplaints /> : <ComplaintSystem />;
@@ -65,19 +88,17 @@ function MainContent({ activeModule, setActiveModule }) {
       </AnimatePresence>
       
       <BillViewer bill={selectedBill} onClose={() => setSelectedBill(null)} />
-      <RoleSwitcher />
+      
+      {/* Dev Role Switcher + Logout */}
+      <div className="fixed bottom-32 lg:bottom-10 right-8 flex flex-col gap-3 z-[5000]">
+          <button 
+            onClick={logout}
+            className="w-14 h-14 bg-white border border-slate-200 shadow-2xl rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-50 transition-colors"
+          >
+            <LogOut size={20} />
+          </button>
+      </div>
     </Layout>
-  );
-}
-
-function RoleSwitcher() {
-  const { loginAs, user } = useAuth();
-  return (
-    <div className="fixed bottom-32 lg:bottom-10 right-8 flex gap-3 bg-white border border-slate-200 shadow-2xl z-[5000] rounded-3xl p-3">
-      <button onClick={() => loginAs('Resident')} className={`p-3 rounded-2xl transition-all ${user.role === 'Resident' ? 'bg-blue-600 text-white shadow-xl' : 'text-slate-400 hover:bg-slate-50'}`}><Users size={20} /></button>
-      <button onClick={() => loginAs('Admin')} className={`p-3 rounded-2xl transition-all ${user.role === 'Society-Admin' ? 'bg-blue-600 text-white shadow-xl' : 'text-slate-400 hover:bg-slate-50'}`}><Shield size={20} /></button>
-      <button onClick={() => loginAs('Guard')} className={`p-3 rounded-2xl transition-all ${user.role === 'Gate-Guard' ? 'bg-blue-600 text-white shadow-xl' : 'text-slate-400 hover:bg-slate-50'}`}><Lock size={20} /></button>
-    </div>
   );
 }
 

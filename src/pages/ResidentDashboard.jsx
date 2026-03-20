@@ -1,175 +1,127 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { 
-  ShieldCheck, Activity, RefreshCw, Sparkles, BarChart, 
-  UserPlus, MessageSquare, Shield, PhoneCall, Wallet, Zap, Droplets, 
-  Bell, ChevronRight, Star, Clock, UserCheck, MessageSquareMore
+    UserPlus, Shield, MessageSquare, Key, LayoutGrid, Plus, 
+    ArrowRight, UserCheck, Users, HelpCircle, Activity, Droplets 
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import DataService from '../services/dataService';
-import { toast } from 'react-hot-toast';
 
-const ResidentDashboard = ({ onShowBill, activeModule, setActiveModule }) => {
+const ResidentDashboard = ({ onShowBill }) => {
     const { user } = useAuth();
-    const [fetching, setFetching] = useState(false);
-
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: { staggerChildren: 0.08, delayChildren: 0.1 }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { y: 15, opacity: 0 },
-        show: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 25 } }
-    };
+    
+    // Fallback for simulation mode if context fails
+    const userName = user?.name || 'Resident';
 
     return (
-        <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-10">
-            {/* NOBROKER FEATURE: Header & Greetings */}
-            <motion.div variants={itemVariants} className="flex justify-between items-center">
+        <div className="px-6 py-4 space-y-10">
+            {/* Dynamic Welcome Header */}
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                   <h1 className="text-4xl font-black tracking-tighter text-slate-900">Unity<span className="text-blue-600">Link</span></h1>
-                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Hello, {user.name.split(' ')[0]} 👋</p>
+                    <motion.h1 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="text-4xl font-black text-slate-900 tracking-tight leading-tight"
+                    >
+                        Hello, {userName.split(' ')[0]} 👋
+                    </motion.h1>
+                    <p className="text-slate-500 font-medium mt-2 flex items-center gap-2">
+                        <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                        Status: Secure at {user?.society || 'Community'} • {user?.unit || 'Unit'}
+                    </p>
                 </div>
-                <div className="flex gap-3">
-                    <button className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-400 border border-slate-200 shadow-sm relative">
-                        <Bell size={20} />
-                        <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white"></span>
-                    </button>
-                    <div className="w-12 h-12 rounded-2xl bg-blue-600 shadow-lg shadow-blue-500/20 flex items-center justify-center text-white font-black overflow-hidden border-2 border-white">
-                        {user.name[0]}
+            </header>
+
+            {/* Quick Action Strip - HIGH REACHABILITY */}
+            <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <QuickAction icon={UserPlus} label="Invite Guest" color="bg-blue-600" />
+                <QuickAction icon={MessageSquare} label="Message Guard" color="bg-slate-900" />
+                <QuickAction icon={Shield} label="Security Pass" color="bg-indigo-600" />
+                <QuickAction icon={Users} label="Family Access" color="bg-violet-600" />
+            </section>
+
+            {/* Live Activity & Updates */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-6">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Live at the Gate</h3>
+                    <div className="space-y-3">
+                        <ActivityLine type="entry" name="Ramesh (Plumber)" time="10:15 AM" status="Entered" />
+                        <ActivityLine type="delivery" name="Amazon Delivery" time="09:42 AM" status="At Gate" highlight />
+                        <ActivityLine type="entry" name="House Help (Shanti)" time="08:20 AM" status="Entered" />
                     </div>
                 </div>
-            </motion.div>
 
-            {/* QUICK ACTIONS: NoBrokerHood Signature Grid */}
-            <motion.div variants={itemVariants} className="grid grid-cols-4 gap-4">
-                <QuickAction icon={UserPlus} label="Invite" sub="Guest" color="bg-emerald-500" onClick={() => {}} />
-                <QuickAction icon={MessageSquareMore} label="Message" sub="Guard" color="bg-blue-500" onClick={() => {}} />
-                <QuickAction icon={Shield} label="Security" sub="Pass" color="bg-orange-500" onClick={() => {}} />
-                <QuickAction icon={Star} label="Family" sub="Access" color="bg-purple-500" onClick={() => {}} />
-            </motion.div>
-
-            {/* LIVE ACTIVITY RIBBON: NoBrokerHood Contextual Feed */}
-            <motion.div variants={itemVariants} className="liquid-card p-5 border-l-[6px] border-l-emerald-500 bg-white shadow-xl relative overflow-hidden group">
-                <div className="flex items-center justify-between relative z-10">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
-                           <UserCheck size={24} />
-                        </div>
-                        <div>
-                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest mb-0.5">Live at the Gate</p>
-                            <h3 className="font-black text-slate-900 leading-none">Ramesh (Plumber) entered.</h3>
-                        </div>
+                <div className="space-y-6">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Essential Utilities</h3>
+                    <div className="grid grid-cols-1 gap-4">
+                        <UtilityCard icon={Droplets} label="Water Tank" value="82%" sub="Daily Level" color="text-blue-500" />
+                        <UtilityCard icon={Activity} label="Power Grid" value="Normal" sub="Stability: High" color="text-amber-500" />
                     </div>
-                    <button className="bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">
-                        VIEW HISTORY
-                    </button>
-                </div>
-            </motion.div>
-
-            {/* CORE STATUS BLOCKS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <motion.div variants={itemVariants}>
-                    <StatusBlock 
-                        title="Water Tank" 
-                        value="82" 
-                        unit="%" 
-                        icon={Droplets} 
-                        color="text-blue-600" 
-                        bg="bg-blue-600"
-                        desc="Supply status: Normal"
-                    />
-                </motion.div>
-                <div className="grid grid-cols-2 gap-6">
-                    <motion.div variants={itemVariants}>
-                        <div className="liquid-card p-6 h-full bg-white flex flex-col justify-between border-slate-100">
-                             <div className="text-orange-500 bg-orange-50 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
-                                <Zap size={20} strokeWidth={3} />
-                             </div>
-                             <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Mains Power</p>
-                                <h4 className="text-2xl font-black text-slate-900">Healthy</h4>
-                             </div>
-                        </div>
-                    </motion.div>
-                    <motion.div variants={itemVariants}>
-                        <div className="liquid-card p-6 h-full bg-slate-900 text-white border-0 shadow-2xl">
-                             <div className="text-blue-400 bg-white/10 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
-                                <Wallet size={20} strokeWidth={3} />
-                             </div>
-                             <div>
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Maintenance</p>
-                                <h4 className="text-2xl font-black tracking-tight">₹12,450</h4>
-                             </div>
-                        </div>
-                    </motion.div>
                 </div>
             </div>
 
-            {/* SERVICES MOSAIC */}
-            <div className="space-y-6">
-                <h3 className="text-lg font-black text-slate-900">Essential Services</h3>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                    <motion.div variants={itemVariants}>
-                        <ServiceTile icon={Sparkles} label="House Help" color="bg-rose-500" />
-                    </motion.div>
-                    <motion.div variants={itemVariants}>
-                        <ServiceTile icon={BarChart} label="Community" color="bg-indigo-500" />
-                    </motion.div>
-                    <motion.div variants={itemVariants}>
-                        <ServiceTile icon={PhoneCall} label="Emergency" color="bg-rose-600" />
-                    </motion.div>
-                    <motion.div variants={itemVariants}>
-                        <ServiceTile icon={Activity} label="Society IQ" color="bg-emerald-600" />
-                    </motion.div>
+            {/* Survival Support Components - NoBrokerHood style */}
+            <section className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">Community IQ</h3>
+                    <button className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:opacity-70">View All Features</button>
                 </div>
-            </div>
-        </motion.div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <ServiceTile icon={UserCheck} label="House Help" color="bg-emerald-500" />
+                    <ServiceTile icon={Building2} label="Community" color="bg-blue-500" />
+                    <ServiceTile icon={HelpCircle} label="Emergency" color="bg-rose-500" />
+                    <ServiceTile icon={LayoutGrid} label="Society IQ" color="bg-slate-900" />
+                </div>
+            </section>
+        </div>
     );
 };
 
-const QuickAction = ({ icon: Icon, label, sub, color, onClick }) => (
+// Sub-components for High Fidelity
+const QuickAction = ({ icon: Icon, label, color }) => (
     <motion.button 
-        whileTap={{ scale: 0.95 }}
-        onClick={onClick}
-        className="flex flex-col items-center gap-2 group cursor-pointer"
+        whileHover={{ y: -4, scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className={`${color} p-6 rounded-[2rem] flex items-center justify-between group shadow-xl shadow-blue-500/10`}
     >
-        <div className={`w-16 h-16 rounded-[1.5rem] ${color} text-white flex items-center justify-center shadow-lg transition-transform group-hover:scale-105 group-hover:rotate-3 shadow-${color}/30`}>
-            <Icon size={28} strokeWidth={2.5} />
+        <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white backdrop-blur-md group-hover:scale-110 transition-transform">
+            <Icon size={24} />
         </div>
-        <div className="text-center">
-            <p className="text-[11px] font-black text-slate-900 leading-none">{label}</p>
-            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mt-1">{sub}</p>
+        <div className="text-right">
+             <span className="text-[10px] font-black uppercase text-white/50 tracking-widest block mb-1">Quick</span>
+             <span className="text-sm font-black text-white">{label}</span>
         </div>
     </motion.button>
 );
 
-const StatusBlock = ({ title, value, unit, icon: Icon, color, bg, desc }) => (
-    <div className="liquid-card p-8 bg-white border-slate-100 flex flex-col justify-between h-full relative overflow-hidden">
-        <div className="flex justify-between items-start relative z-10">
-            <div className={`${bg} text-white p-3 rounded-2xl shadow-lg`}>
+const ActivityLine = ({ type, name, time, status, highlight }) => (
+    <div className={`p-4 rounded-3xl border transition-all flex items-center justify-between ${highlight ? 'bg-blue-50 border-blue-200 shadow-lg shadow-blue-500/5' : 'bg-white border-slate-100 hover:border-slate-200'}`}>
+        <div className="flex items-center gap-4">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${highlight ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                {type === 'entry' ? <UserCheck size={18} /> : <Shield size={18} />}
+            </div>
+            <div>
+                <span className="text-sm font-bold text-slate-900 block leading-tight">{name}</span>
+                <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400">{status} • {time}</span>
+            </div>
+        </div>
+        <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors">
+            <ArrowRight size={16} />
+        </button>
+    </div>
+);
+
+const UtilityCard = ({ icon: Icon, label, value, sub, color }) => (
+    <div className="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center justify-between group hover:border-blue-200 transition-all">
+        <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center ${color} group-hover:scale-110 transition-transform`}>
                 <Icon size={24} />
             </div>
-            <div className="text-right">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{title}</p>
-                <div className="flex items-baseline justify-end gap-1">
-                    <h3 className="text-5xl font-black tracking-tighter text-slate-900">{value}</h3>
-                    <span className="text-xl font-bold text-slate-400">{unit}</span>
-                </div>
+            <div>
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest block">{label}</span>
+                <span className="text-[10px] font-bold text-slate-500 uppercase">{sub}</span>
             </div>
         </div>
-        <div className="mt-8 pt-6 border-t border-slate-50 flex justify-between items-center relative z-10">
-             <span className="text-xs font-bold text-slate-500">{desc}</span>
-             <ChevronRight className="text-slate-300" size={18} />
-        </div>
-        {/* Abstract Pattern Overlay */}
-        <div className="absolute top-0 right-0 p-8 opacity-[0.03] rotate-12 -mr-10 -mt-10">
-            <Icon size={120} />
-        </div>
+        <span className="text-2xl font-black text-slate-900">{value}</span>
     </div>
 );
 
@@ -183,6 +135,29 @@ const ServiceTile = ({ icon: Icon, label, color }) => (
         </div>
         <span className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{label}</span>
     </motion.div>
+);
+
+const Building2 = ({ size, className }) => (
+    <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        width={size} 
+        height={size} 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        className={className}
+    >
+        <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+        <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/>
+        <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
+        <path d="M10 6h4"/>
+        <path d="M10 10h4"/>
+        <path d="M10 14h4"/>
+        <path d="M10 18h4"/>
+    </svg>
 );
 
 export default ResidentDashboard;
