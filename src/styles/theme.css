@@ -1,67 +1,63 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:wght@600;700;800&display=swap');
 
 :root {
-  /* Dynamic Palette: District Pro Blue */
+  /* 2025 Liquid Palette: Vibrant & High-Contrast */
   --primary: #0061ff;
-  --primary-surface: #eef4ff;
-  --primary-on-surface: #003a9c;
+  --primary-glow: rgba(0, 97, 255, 0.15);
   
-  --secondary: #475569;
-  --secondary-surface: #f1f5f9;
+  --bg-main: #fcfcfd;
+  --bg-secondary: #f4f4f7;
   
-  --success: #059669;
-  --warning: #d97706;
-  --error: #dc2626;
+  /* Glass Levels (2025 Standard) */
+  --glass-1: rgba(255, 255, 255, 0.7);
+  --glass-2: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(0, 0, 0, 0.04);
+  
+  /* Haptic Elevation (Inner & Outer shadows) */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 12px 24px rgba(0,0,0,0.06);
+  --shadow-lg: 0 24px 48px rgba(0,0,0,0.08);
+  --shadow-inner: inset 0 2px 4px rgba(255,255,255,0.8);
 
-  /* Neutral Background System */
-  --background: #ffffff;
-  --surface: #f8fafc;
-  --surface-variant: #f1f5f9;
-  --outline: #e2e8f0;
-  
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary: #94a3b8;
-
-  /* Typography Scale */
+  /* Typography */
   --font-header: 'Lexend', sans-serif;
   --font-body: 'Inter', sans-serif;
   
-  /* Fluid Spacing (Gutter: 16px, Margin: 24px) */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  /* Spacing & Radii */
+  --radius-xl: 32px; /* Super-round modern feel */
+  --radius-lg: 20px;
   
-  /* Custom Elevation: Soft Material 3 */
-  --elevation-1: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-  --elevation-2: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
-  --elevation-3: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-  --elevation-4: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  
-  /* Interaction Timing */
-  --transition-fast: 200ms ease-in-out;
+  /* Liquid Physics */
+  --spring-duration: 0.5s;
+  --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--background);
-  color: var(--text-primary);
+  background-color: var(--bg-main);
+  background-image: radial-gradient(at 0% 0%, hsla(217,100%,98%,1) 0, transparent 50%), 
+                    radial-gradient(at 50% 100%, hsla(217,100%,97%,1) 0, transparent 50%);
+  color: #1a1a1a;
   font-family: var(--font-body);
-  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-header);
-  font-weight: 700;
-  margin: 0;
-  line-height: 1.2;
+/* Custom Utilities */
+.liquid-card {
+    background: var(--glass-1);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-md), var(--shadow-inner);
+    border-radius: var(--radius-lg);
+    transition: all 0.4s var(--spring-bounce);
+}
+
+.liquid-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(0, 97, 255, 0.2);
+}
+
+.hero-gradient {
+    background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
 }
